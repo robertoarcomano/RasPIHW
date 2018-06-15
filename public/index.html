@@ -1,0 +1,41 @@
+<script src="jquery.js"></script>
+<script>
+function request(param) {
+	$.ajax({
+	  url: "/"+param,
+	  method: "POST",
+	  cache: false,
+	  success: function(html){
+	    $("#results").html(html.output);
+	    $("#img").attr('src', $("#img").attr('src')+ '?' + Math.random());
+	    setTimeout(function() { $("#results").html(""); },1000);
+	  }
+	});
+}
+function requestRepeating(param) {
+	$.ajax({
+	  url: "/"+param,
+	  method: "POST",
+	  cache: false,
+	  success: function(html){
+	    $("#pir").html(html.output);
+	  }
+	});
+}
+setInterval(function() {
+  requestRepeating("pir");
+},500);
+</script>
+IMAGE<br><img src=test.jpg id="img" width=200><br>
+<input type=button value=Refresh onclick="request('camera')"><br><br>
+PIR <div id="pir" style="position: relative; background-color: green; color: white; width: 30px">OFF</div><br><br>
+LED <br><form>
+<input type=button value=on onclick="request('0/1')"> BLUE <input type=button value=off onclick="request('0/0')"><br>
+<input type=button value=on onclick="request('1/1')"> GREEN <input type=button value=off onclick="request('1/0')"><br>
+<input type=button value=on onclick="request('2/1')"> RED <input type=button value=off onclick="request('2/0')"><br><br>
+TEMPERATURE <input type=button value=Sensor1 onclick="request('temp1')"> - <input type=button value=Sensor2 onclick="request('temp2')"> <br><br>
+HUMIDITY <input type=button value=Sensor onclick="request('hum')"> <br><br>
+RELAY <input type=button value=on onclick="request('relay_on')"> - <input type=button value=off onclick="request('relay_off')"><br><br>
+<input type=text name=lcd id="LCD"><input type=button value=LCD onclick="request('lcd/'+this.form.lcd.value)">
+<div id="results" style="background-color: green; color: white"></div></form>
+
