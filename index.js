@@ -30,6 +30,7 @@ var dht = new rpiDhtSensor.DHT11(23);
 app.use(express.static(__dirname + '/public'));
 ds18b20.sensors(function(err, ids) {
     IDTEMP = ids;
+    setLCDSensors();
 });
 
 var LED = [];
@@ -143,12 +144,23 @@ myCamera.snap()
     message.log(err);
   });
 
+function setLCDSensors() {
+    var text = "T1: " + ds18b20.temperatureSync(IDTEMP) + "C      " +
+		 " T2: " + dht.read().temperature.toFixed(1) + "C" +
+		 " H: " +  dht.read().humidity.toFixed(0)+"%";
+    lcd.clear();
+    lcd.println(text.substr(0,16),1);
+    lcd.println(text.substr(16,16),2);
+}
+
 var lcd = new LCD( 1, 0x3f, 16, 2 );
 // Test LCD
 lcd.off();
 lcd.clear();
-lcd.println("Hello",1);
-lcd.println("World",2);
 lcd.on();
 
 app.listen(SERVERPORT);
+
+setInterval(function() {
+    setLCDSensors();
+},60000);
